@@ -1,3 +1,5 @@
+<img src="http://c5studio.pl/geopoint/geopoint-logo.png" width="500px">
+
 # GeoPOINT – Synthetic Point Generator for Geospatial Applications
 
 **GeoPOINT** is a Python-based tool for generating **synthetic 3D points** to support geospatial, geodetic, and computational experiments.  
