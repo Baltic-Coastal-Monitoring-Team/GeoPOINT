@@ -6,7 +6,7 @@
 It allows users to simulate ideal point distributions, add measurement noise, and apply geodetic distortion models, followed by transformations into local reference frames.  
 The tool is implemented as a Jupyter Notebook (`GeoPOINT_generator.ipynb`).
 
----
+
 
 ## Key Features
 
@@ -31,7 +31,7 @@ The tool is implemented as a Jupyter Notebook (`GeoPOINT_generator.ipynb`).
   - Error vectors illustrating displacements between point sets.  
   - Export of figures as `.jpg` images.  
 
----
+
 
 ## Installation
 
@@ -57,7 +57,7 @@ This environment includes:
 - jupyterlab (for running the notebook)
 - torch (optional numerical extensions)
 
----
+
 
 ## Quick Start
 
@@ -100,7 +100,7 @@ config = {
 5. Transform coordinates into the local body frame.  
 6. Export results to **Excel** and plots to **.jpg** images.
 
----
+
 
 ## Repository Structure
 
@@ -113,7 +113,7 @@ GeoPOINT/
 └─ README.md                  # project documentation
 ```
 
----
+
 
 ## Documentation and Instructions
 
@@ -121,7 +121,95 @@ All instructions, detailed explanations, and usage notes are provided **directly
 Code comments further clarify each computational step, configuration parameter, and transformation method.  
 Users are encouraged to explore the notebook to fully understand the workflow and adapt it to their specific applications.
 
----
+
+
+## Functions and Parameters
+
+### Data Input
+- `INPUT_CFG["source"]` – `"synthetic" | "pcd" | "csv"`
+- `INPUT_CFG["path"]` – `"auto"` (Open3D demo cloud) or path to file
+- `INPUT_CFG["csv"]` – delimiter, usecols, skiprows (for CSV input)
+
+### Synthetic Data Generation
+- `uniform_spherical(config)` – ideal points on a sphere
+- `uniform_spherical_with_noise(config)` – adds Gaussian angular noise
+- `uniform_spherical_with_geodetic_distortion(config)` – adds EDM-based errors
+
+### Transformation Parameters
+- `config["roll"], ["pitch"], ["yaw"]` – rotations (grads)
+- `config["dx"], ["dy"], ["dz"]` – translations [m]
+
+### Noise Parameters
+- `config["gaussian_std"]` – Gaussian noise σ [m]
+- `config["bias"]` – constant bias [m]
+- `config["A"], ["B"]` – EDM error model (A in m, B in ppm)
+
+### Visualization Utilities
+- `plot_on_ax(ax, points, title, color)` – scatter + reference sphere
+- `plot_uncertainty_suite(...)` – histograms, CDF, Q–Q plots, |Δ| vs range
+
+
+
+## Short functions description
+
+Below is a list of the main functions provided in the GeoPOINT notebook, with short descriptions of their purpose.  
+All functions include inline comments and docstrings for further detail.
+
+### Data Input and Configuration
+- **`load_points_from_source(cfg, synthetic_xyz=None)`**  
+  Unified entry point for loading point data.  
+  Depending on `cfg["source"]`, this will:
+  - generate synthetic points (`"synthetic"`),
+  - load a `.pcd` file (direct path or `"auto"` via Open3D demo),
+  - load a `.csv` table with XYZ columns.  
+
+- **`_load_pcd(path_str)`**  
+  Reads `.pcd` point clouds using Open3D.  
+
+- **`_load_csv_xyz(path_str, cfg_csv)`**  
+  Reads XYZ data from CSV files with user-defined delimiter and columns.  
+
+### Synthetic Point Generation
+- **`uniform_spherical(config)`**  
+  Generates ideal points on a sphere.  
+
+- **`uniform_spherical_with_noise(config, theta=None, phi=None)`**  
+  Adds Gaussian angular noise to spherical directions.  
+
+- **`uniform_spherical_with_geodetic_distortion(config, theta=None, phi=None)`**  
+  Adds EDM-based range errors (A, B) and angular noise.  
+
+### Transformation and Error Modelling
+- **Rotation/translation pipeline (matrix `R`, vector `T`)**  
+  Applies user-defined rigid-body transformations (roll, pitch, yaw, dx, dy, dz).  
+
+- **`add_real_noise_pair(transformed_sets, base_label="real_input", ...)`**  
+  Creates a *clean/noisy* pair of real-data clouds by injecting Gaussian noise, bias, or EDM errors.  
+
+- **`noise_only_residuals(transformed_sets, clean_label, noisy_label)`**  
+  Computes per-axis errors (Δx, Δy, Δz), error magnitudes |Δ|, and ranges r.  
+
+### Visualization
+- **`plot_on_ax(ax, points, title, color)`**  
+  Plots 3D scatter points with a reference wireframe sphere.  
+
+- **`plot_uncertainty_suite(transformed_sets, clean_label, noisy_label, ...)`**  
+  Produces per-axis histograms, cumulative distribution, Q–Q plots, and error vs range visualizations.  
+
+- **Alternative visualizations (2D projections, PCA hexbin, displacement histograms)**  
+  Provide compact views for both synthetic and real datasets.  
+
+
+
+## Tested Environments
+
+GeoPOINT has been successfully tested on:
+- Python 3.11 (Conda, environment.yml provided)
+- Ubuntu 22.04 LTS
+- macOS 14.5 (Intel and Apple Silicon)
+- Windows 11 (via WSL2)
+
+
 
 ## Example Applications
 
@@ -130,7 +218,7 @@ Users are encouraged to explore the notebook to fully understand the workflow an
 - Teaching and demonstration of geodetic concepts (roll/pitch/yaw, local frames).  
 - Producing synthetic datasets for algorithm validation.  
 
----
+
 
 ## Contributing
 
@@ -139,7 +227,7 @@ Contributions are welcome:
 - Additional error models or transformation options.  
 - Examples of usage in geodetic or geospatial projects.  
 
----
+
 
 ## Citation
 
@@ -148,10 +236,8 @@ If you use GeoPOINT in your research or publications, please cite:
 [![DOI](https://zenodo.org/badge/1023774805.svg)](https://doi.org/10.5281/zenodo.17065538)
 
 
----
 
 ## License
 
 MIT License – see `LICENSE` file.
 
----

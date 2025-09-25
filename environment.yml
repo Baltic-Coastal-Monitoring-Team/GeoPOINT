@@ -11,6 +11,10 @@ dependencies:
   - openpyxl
   - jupyterlab
   - scipy
+  - seaborn
+  - scikit-learn
+  - open3d  
   - pip
   - pip:
       - torch
+      - pathlib
